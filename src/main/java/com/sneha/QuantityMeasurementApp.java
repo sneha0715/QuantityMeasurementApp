@@ -33,14 +33,49 @@ public class QuantityMeasurementApp {
         }
     }
     
-    public static void main(String[] args) {
-        Feet feet1 = new Feet(1.0);
-        Feet feet2 = new Feet(1.0);
-        Feet feet3 = new Feet(2.0);
+    public static class Inches {
+        private final double value;
         
-        System.out.println("1.0 ft equals 1.0 ft: " + feet1.equals(feet2));
-        System.out.println("1.0 ft equals 2.0 ft: " + feet1.equals(feet3));
-        System.out.println("1.0 ft equals itself: " + feet1.equals(feet1));
-        System.out.println("1.0 ft equals null: " + feet1.equals(null));
+        public Inches(double value) {
+            this.value = value;
+        }
+        
+        public double getValue() {
+            return value;
+        }
+        
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            
+            if (obj == null || getClass() != obj.getClass()) {
+                return false;
+            }
+            
+            Inches inches = (Inches) obj;
+            return Double.compare(this.value, inches.value) == 0;
+        }
+        
+        @Override
+        public int hashCode() {
+            return Double.hashCode(value);
+        }
+    }
+    
+    public static boolean checkFeetEquality(double value1, double value2) {
+        return new Feet(value1).equals(new Feet(value2));
+    }
+    
+    public static boolean checkInchesEquality(double value1, double value2) {
+        return new Inches(value1).equals(new Inches(value2));
+    }
+    
+    public static void main(String[] args) {
+        System.out.println("1.0 ft equals 1.0 ft: " + checkFeetEquality(1.0, 1.0));
+        System.out.println("1.0 ft equals 2.0 ft: " + checkFeetEquality(1.0, 2.0));
+        System.out.println("1.0 inch equals 1.0 inch: " + checkInchesEquality(1.0, 1.0));
+        System.out.println("1.0 inch equals 2.0 inch: " + checkInchesEquality(1.0, 2.0));
     }
 }
