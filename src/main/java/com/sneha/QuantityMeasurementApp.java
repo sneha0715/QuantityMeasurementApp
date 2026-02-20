@@ -1,5 +1,7 @@
 package com.sneha;
 
+import java.util.Scanner;
+
 public class QuantityMeasurementApp {
     
     public static class Feet {
@@ -73,9 +75,27 @@ public class QuantityMeasurementApp {
     }
     
     public static void main(String[] args) {
-        System.out.println("1.0 ft equals 1.0 ft: " + checkFeetEquality(1.0, 1.0));
-        System.out.println("1.0 ft equals 2.0 ft: " + checkFeetEquality(1.0, 2.0));
-        System.out.println("1.0 inch equals 1.0 inch: " + checkInchesEquality(1.0, 1.0));
-        System.out.println("1.0 inch equals 2.0 inch: " + checkInchesEquality(1.0, 2.0));
+        
+        Scanner sc = new Scanner(System.in);
+        
+        System.out.println("Enter first feet value:");
+        double feetValue1 = sc.nextDouble();
+        
+        System.out.println("Enter second feet value:");
+        double feetValue2 = sc.nextDouble();
+        
+        boolean feetResult = checkFeetEquality(feetValue1, feetValue2);
+        System.out.println(feetValue1 + " ft equals " + feetValue2 + " ft: " + feetResult);
+    
+        System.out.println("\nEnter first inch value:");
+        double inchValue1 = sc.nextDouble();
+        
+        System.out.println("Enter second inch value:");
+        double inchValue2 = sc.nextDouble();
+        
+        boolean inchResult = checkInchesEquality(inchValue1, inchValue2);
+        System.out.println(inchValue1 + " inch equals " + inchValue2 + " inch: " + inchResult);
+        
+        sc.close();
     }
 }
