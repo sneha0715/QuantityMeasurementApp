@@ -1,5 +1,7 @@
 package com.sneha;
 
+import java.util.Scanner;
+
 public class QuantityMeasurementApp {
     
     public enum LengthUnit {
@@ -136,16 +138,34 @@ public class QuantityMeasurementApp {
     }
     
     public static void main(String[] args) {
-        System.out.println("1.0 ft equals 1.0 ft: " + checkFeetEquality(1.0, 1.0));
-        System.out.println("1.0 ft equals 2.0 ft: " + checkFeetEquality(1.0, 2.0));
-        System.out.println("1.0 inch equals 1.0 inch: " + checkInchesEquality(1.0, 1.0));
-        System.out.println("1.0 inch equals 2.0 inch: " + checkInchesEquality(1.0, 2.0));
-        
-        Quantity feet1 = new Quantity(1.0, LengthUnit.FEET);
-        Quantity inches12 = new Quantity(12.0, LengthUnit.INCHES);
-        Quantity feet2 = new Quantity(1.0, LengthUnit.FEET);
-        
-        System.out.println("Quantity(1.0, FEET) equals Quantity(12.0, INCHES): " + feet1.equals(inches12));
-        System.out.println("Quantity(1.0, FEET) equals Quantity(1.0, FEET): " + feet1.equals(feet2));
+
+    Scanner sc = new Scanner(System.in);
+
+    System.out.println("Enter first value:");
+    double value1 = sc.nextDouble();
+
+    System.out.println("Enter first unit (FEET / INCHES):");
+    String unit1Input = sc.next().toUpperCase();
+    LengthUnit unit1 = LengthUnit.valueOf(unit1Input);
+
+    System.out.println("Enter second value:");
+    double value2 = sc.nextDouble();
+
+    System.out.println("Enter second unit (FEET / INCHES):");
+    String unit2Input = sc.next().toUpperCase();
+    LengthUnit unit2 = LengthUnit.valueOf(unit2Input);
+
+    Quantity quantity1 = new Quantity(value1, unit1);
+    Quantity quantity2 = new Quantity(value2, unit2);
+
+    boolean result = checkQuantityEquality(quantity1, quantity2);
+
+    if (result) {
+        System.out.println("Both quantities are EQUAL.");
+    } else {
+        System.out.println("Both quantities are NOT EQUAL.");
     }
+
+    sc.close();
+}
 }
