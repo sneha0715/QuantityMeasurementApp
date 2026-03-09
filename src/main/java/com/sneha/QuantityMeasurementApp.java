@@ -8,29 +8,30 @@ public class QuantityMeasurementApp {
         YARDS(3.0),
         CENTIMETERS(1.0 / 30.48);
 
-        private final double conversionFactor;
+        private final double factor;
 
-        LengthUnit(double conversionFactor) {
-            this.conversionFactor = conversionFactor;
+        LengthUnit(double factor) {
+            this.factor = factor;
         }
 
-        public double getConversionFactor() {
-            return conversionFactor;
+        public double getFactor() {
+            return factor;
         }
     }
 
     public static class Quantity {
+
         private final double value;
         private final LengthUnit unit;
         private static final double EPSILON = 1e-6;
 
         public Quantity(double value, LengthUnit unit) {
-            if (unit == null) {
-                throw new IllegalArgumentException("Unit cannot be null");
-            }
-            if (!Double.isFinite(value)) {
-                throw new IllegalArgumentException("Value must be a finite number");
-            }
+            if (unit == null)
+                throw new IllegalArgumentException("Unit must not be null");
+
+            if (!Double.isFinite(value))
+                throw new IllegalArgumentException("Value must be finite");
+
             this.value = value;
             this.unit = unit;
         }
@@ -43,58 +44,75 @@ public class QuantityMeasurementApp {
             return unit;
         }
 
-        private double convertToBaseFeet() {
-            return value * unit.getConversionFactor();
+        private double toFeet() {
+            return value * unit.getFactor();
         }
 
-        public double convertTo(LengthUnit targetUnit) {
-            if (targetUnit == null) {
+        public double convertTo(LengthUnit target) {
+
+            if (target == null)
                 throw new IllegalArgumentException("Target unit cannot be null");
-            }
-            double baseValue = convertToBaseFeet();
-            return baseValue / targetUnit.getConversionFactor();
+
+            double feet = toFeet();
+
+            return feet / target.getFactor();
         }
 
-        public Quantity convertToQuantity(LengthUnit targetUnit) {
-            if (targetUnit == null) {
-                throw new IllegalArgumentException("Target unit cannot be null");
-            }
-            double convertedValue = convertTo(targetUnit);
-            return new Quantity(convertedValue, targetUnit);
+        public Quantity convertToQuantity(LengthUnit target) {
+            double newValue = convertTo(target);
+            return new Quantity(newValue, target);
         }
 
         public Quantity add(Quantity other) {
-            if (other == null) {
-                throw new IllegalArgumentException("Quantity cannot be null");
-            }
 
-            double baseValue1 = this.convertToBaseFeet();
-            double baseValue2 = other.convertToBaseFeet();
+            if (other == null)
+                throw new IllegalArgumentException("Second quantity cannot be null");
 
-            double sumBase = baseValue1 + baseValue2;
+            double firstFeet = this.toFeet();
+            double secondFeet = other.toFeet();
 
-            double resultValue = sumBase / this.unit.getConversionFactor();
+            double sumFeet = firstFeet + secondFeet;
+
+            double resultValue = sumFeet / this.unit.getFactor();
 
             return new Quantity(resultValue, this.unit);
         }
 
+        public Quantity add(Quantity other, LengthUnit targetUnit) {
+
+            if (other == null)
+                throw new IllegalArgumentException("Second quantity cannot be null");
+
+            if (targetUnit == null)
+                throw new IllegalArgumentException("Target unit cannot be null");
+
+            double firstFeet = this.toFeet();
+            double secondFeet = other.toFeet();
+
+            double sumFeet = firstFeet + secondFeet;
+
+            double resultValue = sumFeet / targetUnit.getFactor();
+
+            return new Quantity(resultValue, targetUnit);
+        }
+
         @Override
         public boolean equals(Object obj) {
-            if (this == obj) {
+
+            if (this == obj)
                 return true;
-            }
 
-            if (obj == null || getClass() != obj.getClass()) {
+            if (obj == null || getClass() != obj.getClass())
                 return false;
-            }
 
-            Quantity quantity = (Quantity) obj;
-            return Math.abs(this.convertToBaseFeet() - quantity.convertToBaseFeet()) < EPSILON;
+            Quantity other = (Quantity) obj;
+
+            return Math.abs(this.toFeet() - other.toFeet()) < EPSILON;
         }
 
         @Override
         public int hashCode() {
-            return Double.hashCode(convertToBaseFeet());
+            return Double.hashCode(toFeet());
         }
 
         @Override
@@ -104,6 +122,7 @@ public class QuantityMeasurementApp {
     }
 
     public static class Feet {
+
         private final double value;
 
         public Feet(double value) {
@@ -116,16 +135,16 @@ public class QuantityMeasurementApp {
 
         @Override
         public boolean equals(Object obj) {
-            if (this == obj) {
+
+            if (this == obj)
                 return true;
-            }
 
-            if (obj == null || getClass() != obj.getClass()) {
+            if (obj == null || getClass() != obj.getClass())
                 return false;
-            }
 
-            Feet feet = (Feet) obj;
-            return Double.compare(this.value, feet.value) == 0;
+            Feet other = (Feet) obj;
+
+            return Double.compare(value, other.value) == 0;
         }
 
         @Override
@@ -135,6 +154,7 @@ public class QuantityMeasurementApp {
     }
 
     public static class Inches {
+
         private final double value;
 
         public Inches(double value) {
@@ -147,16 +167,16 @@ public class QuantityMeasurementApp {
 
         @Override
         public boolean equals(Object obj) {
-            if (this == obj) {
+
+            if (this == obj)
                 return true;
-            }
 
-            if (obj == null || getClass() != obj.getClass()) {
+            if (obj == null || getClass() != obj.getClass())
                 return false;
-            }
 
-            Inches inches = (Inches) obj;
-            return Double.compare(this.value, inches.value) == 0;
+            Inches other = (Inches) obj;
+
+            return Double.compare(value, other.value) == 0;
         }
 
         @Override
@@ -165,59 +185,44 @@ public class QuantityMeasurementApp {
         }
     }
 
-    public static boolean checkFeetEquality(double value1, double value2) {
-        return new Feet(value1).equals(new Feet(value2));
+    public static boolean checkFeetEquality(double a, double b) {
+        return new Feet(a).equals(new Feet(b));
     }
 
-    public static boolean checkInchesEquality(double value1, double value2) {
-        return new Inches(value1).equals(new Inches(value2));
+    public static boolean checkInchesEquality(double a, double b) {
+        return new Inches(a).equals(new Inches(b));
     }
 
-    public static boolean checkQuantityEquality(Quantity quantity1, Quantity quantity2) {
-        return quantity1.equals(quantity2);
+    public static boolean checkQuantityEquality(Quantity q1, Quantity q2) {
+        return q1.equals(q2);
     }
 
     public static double convert(double value, LengthUnit source, LengthUnit target) {
-        if (source == null) {
-            throw new IllegalArgumentException("Source unit cannot be null");
-        }
-        if (target == null) {
-            throw new IllegalArgumentException("Target unit cannot be null");
-        }
-        if (!Double.isFinite(value)) {
-            throw new IllegalArgumentException("Value must be a finite number");
-        }
 
-        Quantity quantity = new Quantity(value, source);
-        return quantity.convertTo(target);
+        if (source == null || target == null)
+            throw new IllegalArgumentException("Units must not be null");
+
+        if (!Double.isFinite(value))
+            throw new IllegalArgumentException("Invalid numeric value");
+
+        Quantity q = new Quantity(value, source);
+
+        return q.convertTo(target);
     }
 
     public static void main(String[] args) {
 
-        System.out.println("=== UC6 Addition Examples ===");
-
         Quantity q1 = new Quantity(1.0, LengthUnit.FEET);
         Quantity q2 = new Quantity(12.0, LengthUnit.INCHES);
-        System.out.println("1 FEET + 12 INCHES = " + q1.add(q2));
 
-        Quantity q3 = new Quantity(12.0, LengthUnit.INCHES);
-        Quantity q4 = new Quantity(1.0, LengthUnit.FEET);
-        System.out.println("12 INCHES + 1 FEET = " + q3.add(q4));
+        System.out.println(q1.add(q2));
+        System.out.println(q1.add(q2, LengthUnit.FEET));
+        System.out.println(q1.add(q2, LengthUnit.INCHES));
+        System.out.println(q1.add(q2, LengthUnit.YARDS));
 
-        Quantity q5 = new Quantity(1.0, LengthUnit.YARDS);
-        Quantity q6 = new Quantity(3.0, LengthUnit.FEET);
-        System.out.println("1 YARD + 3 FEET = " + q5.add(q6));
+        Quantity q3 = new Quantity(36.0, LengthUnit.INCHES);
+        Quantity q4 = new Quantity(1.0, LengthUnit.YARDS);
 
-        Quantity q7 = new Quantity(2.54, LengthUnit.CENTIMETERS);
-        Quantity q8 = new Quantity(1.0, LengthUnit.INCHES);
-        System.out.println("2.54 CM + 1 INCH = " + q7.add(q8));
-
-        Quantity q9 = new Quantity(5.0, LengthUnit.FEET);
-        Quantity q10 = new Quantity(0.0, LengthUnit.INCHES);
-        System.out.println("5 FEET + 0 INCH = " + q9.add(q10));
-
-        Quantity q11 = new Quantity(5.0, LengthUnit.FEET);
-        Quantity q12 = new Quantity(-2.0, LengthUnit.FEET);
-        System.out.println("5 FEET + (-2 FEET) = " + q11.add(q12));
+        System.out.println(q3.add(q4, LengthUnit.FEET));
     }
 }

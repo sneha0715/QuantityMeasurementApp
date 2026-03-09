@@ -564,4 +564,89 @@ public class QuantityMeasurementAppTest {
 
         q1.add(null);
     }
+
+    @Test
+    public void testAddition_WithTargetUnit_FeetResult() {
+
+        QuantityMeasurementApp.Quantity feet = new QuantityMeasurementApp.Quantity(1,
+                QuantityMeasurementApp.LengthUnit.FEET);
+
+        QuantityMeasurementApp.Quantity inches = new QuantityMeasurementApp.Quantity(12,
+                QuantityMeasurementApp.LengthUnit.INCHES);
+
+        QuantityMeasurementApp.Quantity result = feet.add(inches,
+                QuantityMeasurementApp.LengthUnit.FEET);
+
+        assertEquals(2.0, result.getValue(), 1e-6);
+        assertEquals(QuantityMeasurementApp.LengthUnit.FEET, result.getUnit());
+    }
+
+    @Test
+    public void testAddition_WithTargetUnit_InchesResult() {
+
+        QuantityMeasurementApp.Quantity feet = new QuantityMeasurementApp.Quantity(1,
+                QuantityMeasurementApp.LengthUnit.FEET);
+
+        QuantityMeasurementApp.Quantity inches = new QuantityMeasurementApp.Quantity(12,
+                QuantityMeasurementApp.LengthUnit.INCHES);
+
+        QuantityMeasurementApp.Quantity result = feet.add(inches,
+                QuantityMeasurementApp.LengthUnit.INCHES);
+
+        assertEquals(24.0, result.getValue(), 1e-6);
+        assertEquals(QuantityMeasurementApp.LengthUnit.INCHES, result.getUnit());
+    }
+
+    @Test
+    public void testAddition_WithTargetUnit_YardsResult() {
+
+        QuantityMeasurementApp.Quantity inches36 = new QuantityMeasurementApp.Quantity(36,
+                QuantityMeasurementApp.LengthUnit.INCHES);
+
+        QuantityMeasurementApp.Quantity feet3 = new QuantityMeasurementApp.Quantity(3,
+                QuantityMeasurementApp.LengthUnit.FEET);
+
+        QuantityMeasurementApp.Quantity result = inches36.add(feet3,
+                QuantityMeasurementApp.LengthUnit.YARDS);
+
+        assertEquals(2.0, result.getValue(), 1e-6);
+        assertEquals(QuantityMeasurementApp.LengthUnit.YARDS, result.getUnit());
+    }
+
+    @Test
+    public void testAddition_TargetUnit_Centimeters() {
+
+        QuantityMeasurementApp.Quantity inches = new QuantityMeasurementApp.Quantity(1,
+                QuantityMeasurementApp.LengthUnit.INCHES);
+
+        QuantityMeasurementApp.Quantity cm = new QuantityMeasurementApp.Quantity(2.54,
+                QuantityMeasurementApp.LengthUnit.CENTIMETERS);
+
+        QuantityMeasurementApp.Quantity result = inches.add(cm,
+                QuantityMeasurementApp.LengthUnit.CENTIMETERS);
+
+        assertEquals(5.08, result.getValue(), 1e-4);
+        assertEquals(QuantityMeasurementApp.LengthUnit.CENTIMETERS, result.getUnit());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddition_TargetUnit_NullUnit() {
+
+        QuantityMeasurementApp.Quantity feet = new QuantityMeasurementApp.Quantity(1,
+                QuantityMeasurementApp.LengthUnit.FEET);
+
+        QuantityMeasurementApp.Quantity inches = new QuantityMeasurementApp.Quantity(12,
+                QuantityMeasurementApp.LengthUnit.INCHES);
+
+        feet.add(inches, null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testAddition_TargetUnit_NullQuantity() {
+
+        QuantityMeasurementApp.Quantity feet = new QuantityMeasurementApp.Quantity(1,
+                QuantityMeasurementApp.LengthUnit.FEET);
+
+        feet.add(null, QuantityMeasurementApp.LengthUnit.FEET);
+    }
 }
