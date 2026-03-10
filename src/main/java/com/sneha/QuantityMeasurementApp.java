@@ -1,227 +1,175 @@
 package com.sneha;
 
-enum LengthUnit {
-    FEET(1.0),
-    INCHES(1.0 / 12.0),
-    YARDS(3.0),
-    CENTIMETERS(1.0 / 30.48);
-
-    private final double factor;
-
-    LengthUnit(double factor) {
-        this.factor = factor;
-    }
-
-    public double convertToBaseUnit(double value) {
-        return value * factor;
-    }
-
-    public double convertFromBaseUnit(double baseValue) {
-        return baseValue / factor;
-    }
-}
-
-enum WeightUnit {
-    KILOGRAM(1.0),
-    GRAM(0.001),
-    POUND(0.453592);
-
-    private final double factor;
-
-    WeightUnit(double factor) {
-        this.factor = factor;
-    }
-
-    public double convertToBaseUnit(double value) {
-        return value * factor;
-    }
-
-    public double convertFromBaseUnit(double baseValue) {
-        return baseValue / factor;
-    }
-}
+import java.util.Objects;
 
 public class QuantityMeasurementApp {
 
-    public static class Feet {
+    public interface IMeasurable {
+        double getConversionFactor();
+
+        default double toBase(double value) {
+            return value * getConversionFactor();
+        }
+
+        default double fromBase(double baseValue) {
+            return baseValue / getConversionFactor();
+        }
+
+        String getUnitName();
+    }
+
+    public enum LengthUnit implements IMeasurable {
+        FEET(12),
+        INCHES(1),
+        YARDS(36),
+        CENTIMETERS(0.3937);
+
+        private final double factor;
+
+        LengthUnit(double factor) {
+            this.factor = factor;
+        }
+
+        public double getConversionFactor() {
+            return factor;
+        }
+
+        public String getUnitName() {
+            return name();
+        }
+    }
+
+    public enum WeightUnit implements IMeasurable {
+        KILOGRAM(1000),
+        GRAM(1),
+        TONNE(1000000);
+
+        private final double factor;
+
+        WeightUnit(double factor) {
+            this.factor = factor;
+        }
+
+        public double getConversionFactor() {
+            return factor;
+        }
+
+        public String getUnitName() {
+            return name();
+        }
+    }
+
+    public static class Quantity<U extends IMeasurable> {
+
         private final double value;
+        private final U unit;
 
-        public Feet(double value) {
-            this.value = value;
-        }
+        public Quantity(double value, U unit) {
+            if (unit == null)
+                throw new IllegalArgumentException("Unit cannot be null");
 
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null || getClass() != obj.getClass()) return false;
-            Feet other = (Feet) obj;
-            return Double.compare(value, other.value) == 0;
-        }
-    }
+            if (Double.isNaN(value) || Double.isInfinite(value))
+                throw new IllegalArgumentException("Invalid value");
 
-    public static class Inches {
-        private final double value;
-
-        public Inches(double value) {
-            this.value = value;
-        }
-
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null || getClass() != obj.getClass()) return false;
-            Inches other = (Inches) obj;
-            return Double.compare(value, other.value) == 0;
-        }
-    }
-
-    public static boolean checkFeetEquality(double a, double b) {
-        return Double.compare(a, b) == 0;
-    }
-
-    public static boolean checkInchesEquality(double a, double b) {
-        return Double.compare(a, b) == 0;
-    }
-
-    public static double convert(double value, LengthUnit source, LengthUnit target) {
-        if (source == null || target == null) throw new IllegalArgumentException();
-        if (Double.isNaN(value) || Double.isInfinite(value)) throw new IllegalArgumentException();
-        double base = source.convertToBaseUnit(value);
-        return target.convertFromBaseUnit(base);
-    }
-
-    public static class Quantity {
-
-        private final double value;
-        private final LengthUnit unit;
-        private static final double EPSILON = 1e-6;
-
-        public Quantity(double value, LengthUnit unit) {
-            if (unit == null) throw new IllegalArgumentException();
-            if (Double.isNaN(value) || Double.isInfinite(value)) throw new IllegalArgumentException();
             this.value = value;
             this.unit = unit;
-        }
-
-        private double toBaseUnit() {
-            return unit.convertToBaseUnit(value);
-        }
-
-        public double convertTo(LengthUnit targetUnit) {
-            if (targetUnit == null) throw new IllegalArgumentException();
-            double base = toBaseUnit();
-            return targetUnit.convertFromBaseUnit(base);
-        }
-
-        public Quantity convertToQuantity(LengthUnit targetUnit) {
-            double result = convertTo(targetUnit);
-            return new Quantity(result, targetUnit);
-        }
-
-        public Quantity add(Quantity other) {
-            return add(other, this.unit);
-        }
-
-        public Quantity add(Quantity other, LengthUnit targetUnit) {
-            if (other == null || targetUnit == null) throw new IllegalArgumentException();
-            double sumBase = this.toBaseUnit() + other.toBaseUnit();
-            double result = targetUnit.convertFromBaseUnit(sumBase);
-            return new Quantity(result, targetUnit);
         }
 
         public double getValue() {
             return value;
         }
 
-        public LengthUnit getUnit() {
+        public U getUnit() {
             return unit;
         }
 
-        public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null || getClass() != obj.getClass()) return false;
-            Quantity other = (Quantity) obj;
-            return Math.abs(this.toBaseUnit() - other.toBaseUnit()) < EPSILON;
+        public Quantity<U> convertTo(U targetUnit) {
+            double base = unit.toBase(value);
+            double result = targetUnit.fromBase(base);
+            return new Quantity<>(round(result), targetUnit);
         }
 
-        public int hashCode() {
-            return Double.valueOf(toBaseUnit()).hashCode();
-        }
-
-        public String toString() {
-            return value + " " + unit;
-        }
-    }
-
-    public static class QuantityWeight {
-
-        private final double value;
-        private final WeightUnit unit;
-        private static final double EPSILON = 1e-6;
-
-        public QuantityWeight(double value, WeightUnit unit) {
-            if (unit == null) throw new IllegalArgumentException();
-            if (Double.isNaN(value) || Double.isInfinite(value)) throw new IllegalArgumentException();
-            this.value = value;
-            this.unit = unit;
-        }
-
-        private double toBaseUnit() {
-            return unit.convertToBaseUnit(value);
-        }
-
-        public QuantityWeight convertTo(WeightUnit targetUnit) {
-            if (targetUnit == null) throw new IllegalArgumentException();
-            double base = toBaseUnit();
-            double result = targetUnit.convertFromBaseUnit(base);
-            return new QuantityWeight(result, targetUnit);
-        }
-
-        public QuantityWeight add(QuantityWeight other) {
+        public Quantity<U> add(Quantity<U> other) {
             return add(other, this.unit);
         }
 
-        public QuantityWeight add(QuantityWeight other, WeightUnit targetUnit) {
-            if (other == null || targetUnit == null) throw new IllegalArgumentException();
-            double sumBase = this.toBaseUnit() + other.toBaseUnit();
-            double result = targetUnit.convertFromBaseUnit(sumBase);
-            return new QuantityWeight(result, targetUnit);
+        public Quantity<U> add(Quantity<U> other, U targetUnit) {
+
+            if (!unit.getClass().equals(other.unit.getClass()))
+                throw new IllegalArgumentException("Different measurement categories");
+
+            double base1 = unit.toBase(value);
+            double base2 = other.unit.toBase(other.value);
+
+            double sumBase = base1 + base2;
+
+            double result = targetUnit.fromBase(sumBase);
+
+            return new Quantity<>(round(result), targetUnit);
         }
 
-        public double getValue() {
-            return value;
+        private double round(double value) {
+            return Math.round(value * 100.0) / 100.0;
         }
 
-        public WeightUnit getUnit() {
-            return unit;
-        }
-
+        @Override
         public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (obj == null || getClass() != obj.getClass()) return false;
-            QuantityWeight other = (QuantityWeight) obj;
-            return Math.abs(this.toBaseUnit() - other.toBaseUnit()) < EPSILON;
+
+            if (this == obj)
+                return true;
+
+            if (obj == null || !(obj instanceof Quantity))
+                return false;
+
+            Quantity<?> other = (Quantity<?>) obj;
+
+            if (!unit.getClass().equals(other.unit.getClass()))
+                return false;
+
+            double base1 = unit.toBase(value);
+            double base2 = other.unit.toBase(other.value);
+
+            return Double.compare(base1, base2) == 0;
         }
 
+        @Override
         public int hashCode() {
-            return Double.valueOf(toBaseUnit()).hashCode();
+            double base = unit.toBase(value);
+            return Objects.hash(base, unit.getClass());
         }
 
+        @Override
         public String toString() {
-            return value + " " + unit;
+            return value + " " + unit.getUnitName();
         }
+    }
+
+    public static void demonstrateEquality(Quantity<?> q1, Quantity<?> q2) {
+        System.out.println("Equality: " + q1 + " == " + q2 + " -> " + q1.equals(q2));
+    }
+
+    public static <U extends IMeasurable> void demonstrateConversion(Quantity<U> q, U target) {
+        System.out.println("Conversion: " + q + " -> " + q.convertTo(target));
+    }
+
+    public static <U extends IMeasurable> void demonstrateAddition(Quantity<U> q1, Quantity<U> q2, U target) {
+        System.out.println("Addition: " + q1 + " + " + q2 + " = " + q1.add(q2, target));
     }
 
     public static void main(String[] args) {
 
-        Quantity length1 = new Quantity(1.0, LengthUnit.FEET);
-        Quantity length2 = new Quantity(12.0, LengthUnit.INCHES);
+        Quantity<LengthUnit> length1 = new Quantity<>(1.0, LengthUnit.FEET);
+        Quantity<LengthUnit> length2 = new Quantity<>(12.0, LengthUnit.INCHES);
 
-        Quantity lengthResult = length1.add(length2, LengthUnit.FEET);
-        System.out.println("Length Result: " + lengthResult);
+        demonstrateEquality(length1, length2);
+        demonstrateConversion(length1, LengthUnit.INCHES);
+        demonstrateAddition(length1, length2, LengthUnit.FEET);
 
-        QuantityWeight weight1 = new QuantityWeight(1.0, WeightUnit.KILOGRAM);
-        QuantityWeight weight2 = new QuantityWeight(500.0, WeightUnit.GRAM);
+        Quantity<WeightUnit> weight1 = new Quantity<>(1.0, WeightUnit.KILOGRAM);
+        Quantity<WeightUnit> weight2 = new Quantity<>(1000.0, WeightUnit.GRAM);
 
-        QuantityWeight weightResult = weight1.add(weight2, WeightUnit.KILOGRAM);
-        System.out.println("Weight Result: " + weightResult);
+        demonstrateEquality(weight1, weight2);
+        demonstrateConversion(weight1, WeightUnit.GRAM);
+        demonstrateAddition(weight1, weight2, WeightUnit.KILOGRAM);
     }
 }
