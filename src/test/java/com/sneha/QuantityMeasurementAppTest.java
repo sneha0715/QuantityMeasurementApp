@@ -1,252 +1,160 @@
 package com.sneha;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class QuantityMeasurementAppTest {
 
     @Test
-    public void testLengthEquality_FeetToInches() {
+    void testAdd_Length_FeetAndInches() {
+        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> q1 =
+                new QuantityMeasurementApp.Quantity<>(1.0, QuantityMeasurementApp.LengthUnit.FEET);
+        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> q2 =
+                new QuantityMeasurementApp.Quantity<>(12.0, QuantityMeasurementApp.LengthUnit.INCHES);
 
-        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> feet =
-                new QuantityMeasurementApp.Quantity<>(1, QuantityMeasurementApp.LengthUnit.FEET);
+        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> result = q1.add(q2);
 
-        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> inches =
-                new QuantityMeasurementApp.Quantity<>(12, QuantityMeasurementApp.LengthUnit.INCHES);
-
-        assertTrue(feet.equals(inches));
+        assertEquals(new QuantityMeasurementApp.Quantity<>(2.0, QuantityMeasurementApp.LengthUnit.FEET), result);
     }
 
     @Test
-    public void testLengthConversion_FeetToInches() {
-
-        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> feet =
-                new QuantityMeasurementApp.Quantity<>(1, QuantityMeasurementApp.LengthUnit.FEET);
-
-        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> result =
-                feet.convertTo(QuantityMeasurementApp.LengthUnit.INCHES);
-
-        assertEquals(12, result.getValue(), 0.001);
-    }
-
-    @Test
-    public void testLengthAddition() {
-
-        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> feet =
-                new QuantityMeasurementApp.Quantity<>(1, QuantityMeasurementApp.LengthUnit.FEET);
-
-        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> inches =
-                new QuantityMeasurementApp.Quantity<>(12, QuantityMeasurementApp.LengthUnit.INCHES);
-
-        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> result =
-                feet.add(inches);
-
-        assertEquals(2, result.getValue(), 0.001);
-    }
-
-    @Test
-    public void testLengthSubtraction() {
-
-        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> feet =
-                new QuantityMeasurementApp.Quantity<>(10, QuantityMeasurementApp.LengthUnit.FEET);
-
-        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> inches =
-                new QuantityMeasurementApp.Quantity<>(6, QuantityMeasurementApp.LengthUnit.INCHES);
-
-        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> result =
-                feet.subtract(inches);
-
-        assertEquals(9.5, result.getValue(), 0.001);
-    }
-
-    @Test
-    public void testLengthDivision() {
-
-        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> feet =
-                new QuantityMeasurementApp.Quantity<>(10, QuantityMeasurementApp.LengthUnit.FEET);
-
-        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> twoFeet =
-                new QuantityMeasurementApp.Quantity<>(2, QuantityMeasurementApp.LengthUnit.FEET);
-
-        double result = feet.divide(twoFeet);
-
-        assertEquals(5, result, 0.001);
-    }
-
-
-    @Test
-    public void testWeightEquality() {
-
-        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.WeightUnit> kg =
-                new QuantityMeasurementApp.Quantity<>(1, QuantityMeasurementApp.WeightUnit.KILOGRAM);
-
-        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.WeightUnit> gram =
-                new QuantityMeasurementApp.Quantity<>(1000, QuantityMeasurementApp.WeightUnit.GRAM);
-
-        assertTrue(kg.equals(gram));
-    }
-
-    @Test
-    public void testWeightConversion() {
-
-        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.WeightUnit> kg =
-                new QuantityMeasurementApp.Quantity<>(1, QuantityMeasurementApp.WeightUnit.KILOGRAM);
+    void testAdd_Weight_KgAndGram_TargetGram() {
+        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.WeightUnit> q1 =
+                new QuantityMeasurementApp.Quantity<>(10.0, QuantityMeasurementApp.WeightUnit.KILOGRAM);
+        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.WeightUnit> q2 =
+                new QuantityMeasurementApp.Quantity<>(5000.0, QuantityMeasurementApp.WeightUnit.GRAM);
 
         QuantityMeasurementApp.Quantity<QuantityMeasurementApp.WeightUnit> result =
-                kg.convertTo(QuantityMeasurementApp.WeightUnit.GRAM);
+                q1.add(q2, QuantityMeasurementApp.WeightUnit.GRAM);
 
-        assertEquals(1000, result.getValue(), 0.001);
+        assertEquals(new QuantityMeasurementApp.Quantity<>(15000.0, QuantityMeasurementApp.WeightUnit.GRAM), result);
     }
 
     @Test
-    public void testWeightAddition() {
+    void testSubtract_Length() {
+        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> q1 =
+                new QuantityMeasurementApp.Quantity<>(10.0, QuantityMeasurementApp.LengthUnit.FEET);
+        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> q2 =
+                new QuantityMeasurementApp.Quantity<>(6.0, QuantityMeasurementApp.LengthUnit.INCHES);
 
-        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.WeightUnit> kg =
-                new QuantityMeasurementApp.Quantity<>(1, QuantityMeasurementApp.WeightUnit.KILOGRAM);
+        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> result = q1.subtract(q2);
 
-        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.WeightUnit> grams =
-                new QuantityMeasurementApp.Quantity<>(500, QuantityMeasurementApp.WeightUnit.GRAM);
-
-        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.WeightUnit> result =
-                kg.add(grams, QuantityMeasurementApp.WeightUnit.KILOGRAM);
-
-        assertEquals(1.5, result.getValue(), 0.001);
+        assertEquals(new QuantityMeasurementApp.Quantity<>(9.5, QuantityMeasurementApp.LengthUnit.FEET), result);
     }
 
     @Test
-    public void testWeightSubtraction() {
-
-        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.WeightUnit> kg =
-                new QuantityMeasurementApp.Quantity<>(10, QuantityMeasurementApp.WeightUnit.KILOGRAM);
-
-        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.WeightUnit> grams =
-                new QuantityMeasurementApp.Quantity<>(5000, QuantityMeasurementApp.WeightUnit.GRAM);
-
-        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.WeightUnit> result =
-                kg.subtract(grams);
-
-        assertEquals(5, result.getValue(), 0.001);
-    }
-
-    @Test
-    public void testWeightDivision() {
-
-        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.WeightUnit> kg =
-                new QuantityMeasurementApp.Quantity<>(10, QuantityMeasurementApp.WeightUnit.KILOGRAM);
-
-        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.WeightUnit> kg2 =
-                new QuantityMeasurementApp.Quantity<>(5, QuantityMeasurementApp.WeightUnit.KILOGRAM);
-
-        double result = kg.divide(kg2);
-
-        assertEquals(2, result, 0.001);
-    }
-
-
-    @Test
-    public void testVolumeEquality() {
-
-        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.VolumeUnit> litre =
-                new QuantityMeasurementApp.Quantity<>(1, QuantityMeasurementApp.VolumeUnit.LITRE);
-
-        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.VolumeUnit> ml =
-                new QuantityMeasurementApp.Quantity<>(1000, QuantityMeasurementApp.VolumeUnit.MILLILITRE);
-
-        assertTrue(litre.equals(ml));
-    }
-
-    @Test
-    public void testVolumeConversion() {
-
-        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.VolumeUnit> litre =
-                new QuantityMeasurementApp.Quantity<>(1, QuantityMeasurementApp.VolumeUnit.LITRE);
+    void testSubtract_Volume_TargetMillilitre() {
+        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.VolumeUnit> q1 =
+                new QuantityMeasurementApp.Quantity<>(5.0, QuantityMeasurementApp.VolumeUnit.LITRE);
+        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.VolumeUnit> q2 =
+                new QuantityMeasurementApp.Quantity<>(2.0, QuantityMeasurementApp.VolumeUnit.LITRE);
 
         QuantityMeasurementApp.Quantity<QuantityMeasurementApp.VolumeUnit> result =
-                litre.convertTo(QuantityMeasurementApp.VolumeUnit.MILLILITRE);
+                q1.subtract(q2, QuantityMeasurementApp.VolumeUnit.MILLILITRE);
 
-        assertEquals(1000, result.getValue(), 0.001);
+        assertEquals(new QuantityMeasurementApp.Quantity<>(3000.0, QuantityMeasurementApp.VolumeUnit.MILLILITRE), result);
     }
 
     @Test
-    public void testVolumeAddition() {
+    void testDivide_Length() {
+        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> q1 =
+                new QuantityMeasurementApp.Quantity<>(10.0, QuantityMeasurementApp.LengthUnit.FEET);
+        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> q2 =
+                new QuantityMeasurementApp.Quantity<>(2.0, QuantityMeasurementApp.LengthUnit.FEET);
 
-        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.VolumeUnit> litre =
-                new QuantityMeasurementApp.Quantity<>(1, QuantityMeasurementApp.VolumeUnit.LITRE);
+        double result = q1.divide(q2);
 
-        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.VolumeUnit> ml =
-                new QuantityMeasurementApp.Quantity<>(1000, QuantityMeasurementApp.VolumeUnit.MILLILITRE);
-
-        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.VolumeUnit> result =
-                litre.add(ml);
-
-        assertEquals(2, result.getValue(), 0.001);
+        assertEquals(5.0, result);
     }
 
     @Test
-    public void testVolumeSubtraction() {
+    void testDivide_CrossUnits() {
+        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> q1 =
+                new QuantityMeasurementApp.Quantity<>(24.0, QuantityMeasurementApp.LengthUnit.INCHES);
+        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> q2 =
+                new QuantityMeasurementApp.Quantity<>(2.0, QuantityMeasurementApp.LengthUnit.FEET);
 
-        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.VolumeUnit> litre =
-                new QuantityMeasurementApp.Quantity<>(5, QuantityMeasurementApp.VolumeUnit.LITRE);
+        double result = q1.divide(q2);
 
-        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.VolumeUnit> ml =
-                new QuantityMeasurementApp.Quantity<>(500, QuantityMeasurementApp.VolumeUnit.MILLILITRE);
-
-        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.VolumeUnit> result =
-                litre.subtract(ml);
-
-        assertEquals(4.5, result.getValue(), 0.001);
+        assertEquals(1.0, result);
     }
 
     @Test
-    public void testVolumeDivision() {
+    void testAdd_NullOperand_ThrowsException() {
+        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> q1 =
+                new QuantityMeasurementApp.Quantity<>(10.0, QuantityMeasurementApp.LengthUnit.FEET);
 
-        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.VolumeUnit> litre =
-                new QuantityMeasurementApp.Quantity<>(5, QuantityMeasurementApp.VolumeUnit.LITRE);
-
-        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.VolumeUnit> litre2 =
-                new QuantityMeasurementApp.Quantity<>(10, QuantityMeasurementApp.VolumeUnit.LITRE);
-
-        double result = litre.divide(litre2);
-
-        assertEquals(0.5, result, 0.001);
-    }
-
-
-    @Test
-    public void testSubtractionNegativeResult() {
-
-        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> a =
-                new QuantityMeasurementApp.Quantity<>(5, QuantityMeasurementApp.LengthUnit.FEET);
-
-        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> b =
-                new QuantityMeasurementApp.Quantity<>(10, QuantityMeasurementApp.LengthUnit.FEET);
-
-        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> result = a.subtract(b);
-
-        assertEquals(-5, result.getValue(), 0.001);
-    }
-
-    @Test(expected = ArithmeticException.class)
-    public void testDivisionByZero() {
-
-        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> a =
-                new QuantityMeasurementApp.Quantity<>(10, QuantityMeasurementApp.LengthUnit.FEET);
-
-        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> zero =
-                new QuantityMeasurementApp.Quantity<>(0, QuantityMeasurementApp.LengthUnit.FEET);
-
-        a.divide(zero);
+        assertThrows(IllegalArgumentException.class, () -> q1.add(null));
     }
 
     @Test
-    public void testDifferentMeasurementCategoriesNotEqual() {
-
+    void testSubtract_CrossCategory_ThrowsException() {
         QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> length =
-                new QuantityMeasurementApp.Quantity<>(1, QuantityMeasurementApp.LengthUnit.FEET);
-
+                new QuantityMeasurementApp.Quantity<>(10.0, QuantityMeasurementApp.LengthUnit.FEET);
         QuantityMeasurementApp.Quantity<QuantityMeasurementApp.WeightUnit> weight =
-                new QuantityMeasurementApp.Quantity<>(1, QuantityMeasurementApp.WeightUnit.KILOGRAM);
+                new QuantityMeasurementApp.Quantity<>(5.0, QuantityMeasurementApp.WeightUnit.KILOGRAM);
 
-        assertFalse(length.equals(weight));
+        assertThrows(IllegalArgumentException.class, () -> length.subtract((QuantityMeasurementApp.Quantity) weight));
+    }
+
+    @Test
+    void testDivide_ByZero() {
+        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> q1 =
+                new QuantityMeasurementApp.Quantity<>(10.0, QuantityMeasurementApp.LengthUnit.FEET);
+        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> q2 =
+                new QuantityMeasurementApp.Quantity<>(0.0, QuantityMeasurementApp.LengthUnit.FEET);
+
+        assertThrows(ArithmeticException.class, () -> q1.divide(q2));
+    }
+
+    @Test
+    void testAdd_RoundingToTwoDecimals() {
+        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> q1 =
+                new QuantityMeasurementApp.Quantity<>(1.333, QuantityMeasurementApp.LengthUnit.FEET);
+        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> q2 =
+                new QuantityMeasurementApp.Quantity<>(1.111, QuantityMeasurementApp.LengthUnit.FEET);
+
+        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> result = q1.add(q2);
+
+        assertEquals(new QuantityMeasurementApp.Quantity<>(2.44, QuantityMeasurementApp.LengthUnit.FEET), result);
+    }
+
+    @Test
+    void testImmutability_AfterAddition() {
+        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> q1 =
+                new QuantityMeasurementApp.Quantity<>(5.0, QuantityMeasurementApp.LengthUnit.FEET);
+        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> q2 =
+                new QuantityMeasurementApp.Quantity<>(5.0, QuantityMeasurementApp.LengthUnit.FEET);
+
+        q1.add(q2);
+
+        assertEquals(new QuantityMeasurementApp.Quantity<>(5.0, QuantityMeasurementApp.LengthUnit.FEET), q1);
+        assertEquals(new QuantityMeasurementApp.Quantity<>(5.0, QuantityMeasurementApp.LengthUnit.FEET), q2);
+    }
+
+    @Test
+    void testImplicitTargetUnit_Add() {
+        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> q1 =
+                new QuantityMeasurementApp.Quantity<>(1.0, QuantityMeasurementApp.LengthUnit.FEET);
+        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> q2 =
+                new QuantityMeasurementApp.Quantity<>(12.0, QuantityMeasurementApp.LengthUnit.INCHES);
+
+        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> result = q1.add(q2);
+
+        assertEquals(QuantityMeasurementApp.LengthUnit.FEET,
+                result.toString().contains("FEET") ? QuantityMeasurementApp.LengthUnit.FEET : null);
+    }
+
+    @Test
+    void testExplicitTargetUnit_Add() {
+        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> q1 =
+                new QuantityMeasurementApp.Quantity<>(1.0, QuantityMeasurementApp.LengthUnit.FEET);
+        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> q2 =
+                new QuantityMeasurementApp.Quantity<>(12.0, QuantityMeasurementApp.LengthUnit.INCHES);
+
+        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> result =
+                q1.add(q2, QuantityMeasurementApp.LengthUnit.INCHES);
+
+        assertEquals(new QuantityMeasurementApp.Quantity<>(24.0, QuantityMeasurementApp.LengthUnit.INCHES), result);
     }
 }
