@@ -1,23 +1,32 @@
 package com.sneha;
 
-public class QuantityMeasurementApp {
+enum LengthUnit {
 
-    public enum LengthUnit {
-        FEET(1.0),
-        INCHES(1.0 / 12.0),
-        YARDS(3.0),
-        CENTIMETERS(1.0 / 30.48);
+    FEET(1.0),
+    INCHES(1.0 / 12.0),
+    YARDS(3.0),
+    CENTIMETERS(1.0 / 30.48);
 
-        private final double factor;
+    private final double factor;
 
-        LengthUnit(double factor) {
-            this.factor = factor;
-        }
-
-        public double getFactor() {
-            return factor;
-        }
+    LengthUnit(double factor) {
+        this.factor = factor;
     }
+
+    public double getFactor() {
+        return factor;
+    }
+
+    public double convertToBaseUnit(double value) {
+        return value * factor;
+    }
+
+    public double convertFromBaseUnit(double baseValue) {
+        return baseValue / factor;
+    }
+}
+
+public class QuantityMeasurementApp {
 
     public static class Quantity {
 
@@ -26,6 +35,7 @@ public class QuantityMeasurementApp {
         private static final double EPSILON = 1e-6;
 
         public Quantity(double value, LengthUnit unit) {
+
             if (unit == null)
                 throw new IllegalArgumentException("Unit must not be null");
 
@@ -44,8 +54,8 @@ public class QuantityMeasurementApp {
             return unit;
         }
 
-        private double toFeet() {
-            return value * unit.getFactor();
+        private double toBaseUnit() {
+            return unit.convertToBaseUnit(value);
         }
 
         public double convertTo(LengthUnit target) {
@@ -53,13 +63,15 @@ public class QuantityMeasurementApp {
             if (target == null)
                 throw new IllegalArgumentException("Target unit cannot be null");
 
-            double feet = toFeet();
+            double base = toBaseUnit();
 
-            return feet / target.getFactor();
+            return target.convertFromBaseUnit(base);
         }
 
         public Quantity convertToQuantity(LengthUnit target) {
+
             double newValue = convertTo(target);
+
             return new Quantity(newValue, target);
         }
 
@@ -68,14 +80,11 @@ public class QuantityMeasurementApp {
             if (other == null)
                 throw new IllegalArgumentException("Second quantity cannot be null");
 
-            double firstFeet = this.toFeet();
-            double secondFeet = other.toFeet();
+            double sumBase = this.toBaseUnit() + other.toBaseUnit();
 
-            double sumFeet = firstFeet + secondFeet;
+            double resultValue = unit.convertFromBaseUnit(sumBase);
 
-            double resultValue = sumFeet / this.unit.getFactor();
-
-            return new Quantity(resultValue, this.unit);
+            return new Quantity(resultValue, unit);
         }
 
         public Quantity add(Quantity other, LengthUnit targetUnit) {
@@ -86,12 +95,9 @@ public class QuantityMeasurementApp {
             if (targetUnit == null)
                 throw new IllegalArgumentException("Target unit cannot be null");
 
-            double firstFeet = this.toFeet();
-            double secondFeet = other.toFeet();
+            double sumBase = this.toBaseUnit() + other.toBaseUnit();
 
-            double sumFeet = firstFeet + secondFeet;
-
-            double resultValue = sumFeet / targetUnit.getFactor();
+            double resultValue = targetUnit.convertFromBaseUnit(sumBase);
 
             return new Quantity(resultValue, targetUnit);
         }
@@ -107,12 +113,12 @@ public class QuantityMeasurementApp {
 
             Quantity other = (Quantity) obj;
 
-            return Math.abs(this.toFeet() - other.toFeet()) < EPSILON;
+            return Math.abs(this.toBaseUnit() - other.toBaseUnit()) < EPSILON;
         }
 
         @Override
         public int hashCode() {
-            return Double.hashCode(toFeet());
+            return Double.hashCode(toBaseUnit());
         }
 
         @Override
@@ -205,9 +211,9 @@ public class QuantityMeasurementApp {
         if (!Double.isFinite(value))
             throw new IllegalArgumentException("Invalid numeric value");
 
-        Quantity q = new Quantity(value, source);
+        double base = source.convertToBaseUnit(value);
 
-        return q.convertTo(target);
+        return target.convertFromBaseUnit(base);
     }
 
     public static void main(String[] args) {
@@ -215,14 +221,25 @@ public class QuantityMeasurementApp {
         Quantity q1 = new Quantity(1.0, LengthUnit.FEET);
         Quantity q2 = new Quantity(12.0, LengthUnit.INCHES);
 
+        System.out.println(q1.convertToQuantity(LengthUnit.INCHES));
+
         System.out.println(q1.add(q2));
+
         System.out.println(q1.add(q2, LengthUnit.FEET));
+
         System.out.println(q1.add(q2, LengthUnit.INCHES));
+
         System.out.println(q1.add(q2, LengthUnit.YARDS));
 
         Quantity q3 = new Quantity(36.0, LengthUnit.INCHES);
         Quantity q4 = new Quantity(1.0, LengthUnit.YARDS);
 
+        System.out.println(q3.equals(q4));
+
         System.out.println(q3.add(q4, LengthUnit.FEET));
+
+        System.out.println(LengthUnit.FEET.convertToBaseUnit(12.0));
+
+        System.out.println(LengthUnit.INCHES.convertToBaseUnit(12.0));
     }
 }
