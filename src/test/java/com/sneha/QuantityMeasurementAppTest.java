@@ -189,4 +189,60 @@ public class QuantityMeasurementAppTest {
                 assertEquals(2.0, result.getValue(), 1e-6);
                 assertEquals(LengthUnit.YARDS, result.getUnit());
         }
+
+        @Test
+        public void testWeightEquality_KgToGram() {
+                QuantityMeasurementApp.QuantityWeight kg = new QuantityMeasurementApp.QuantityWeight(1.0,
+                                WeightUnit.KILOGRAM);
+                QuantityMeasurementApp.QuantityWeight grams = new QuantityMeasurementApp.QuantityWeight(1000.0,
+                                WeightUnit.GRAM);
+                assertTrue(kg.equals(grams));
+        }
+
+        @Test
+        public void testWeightEquality_KgToPound_NotEqual() {
+                QuantityMeasurementApp.QuantityWeight kg = new QuantityMeasurementApp.QuantityWeight(1.0,
+                                WeightUnit.KILOGRAM);
+                QuantityMeasurementApp.QuantityWeight pound = new QuantityMeasurementApp.QuantityWeight(1.0,
+                                WeightUnit.POUND);
+                assertFalse(kg.equals(pound));
+        }
+
+        @Test
+        public void testWeightConversion_KgToGram() {
+                QuantityMeasurementApp.QuantityWeight kg = new QuantityMeasurementApp.QuantityWeight(1.0,
+                                WeightUnit.KILOGRAM);
+                QuantityMeasurementApp.QuantityWeight result = kg.convertTo(WeightUnit.GRAM);
+                assertEquals(1000.0, result.getValue(), 1e-6);
+        }
+
+        @Test
+        public void testWeightConversion_PoundToKg() {
+                QuantityMeasurementApp.QuantityWeight pound = new QuantityMeasurementApp.QuantityWeight(1.0,
+                                WeightUnit.POUND);
+                QuantityMeasurementApp.QuantityWeight result = pound.convertTo(WeightUnit.KILOGRAM);
+                assertEquals(0.453592, result.getValue(), 1e-6);
+        }
+
+        @Test
+        public void testWeightAddition_SameUnit() {
+                QuantityMeasurementApp.QuantityWeight w1 = new QuantityMeasurementApp.QuantityWeight(2.0,
+                                WeightUnit.KILOGRAM);
+                QuantityMeasurementApp.QuantityWeight w2 = new QuantityMeasurementApp.QuantityWeight(3.0,
+                                WeightUnit.KILOGRAM);
+
+                QuantityMeasurementApp.QuantityWeight result = w1.add(w2);
+                assertEquals(5.0, result.getValue(), 1e-6);
+        }
+
+        @Test
+        public void testWeightAddition_CrossUnit() {
+                QuantityMeasurementApp.QuantityWeight kg = new QuantityMeasurementApp.QuantityWeight(1.0,
+                                WeightUnit.KILOGRAM);
+                QuantityMeasurementApp.QuantityWeight grams = new QuantityMeasurementApp.QuantityWeight(500.0,
+                                WeightUnit.GRAM);
+
+                QuantityMeasurementApp.QuantityWeight result = kg.add(grams, WeightUnit.KILOGRAM);
+                assertEquals(1.5, result.getValue(), 1e-6);
+        }
 }
