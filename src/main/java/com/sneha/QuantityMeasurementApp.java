@@ -59,6 +59,26 @@ public class QuantityMeasurementApp {
         }
     }
 
+    public enum VolumeUnit implements IMeasurable {
+        LITRE(1000),
+        MILLILITRE(1),
+        GALLON(3785.41);
+
+        private final double factor;
+
+        VolumeUnit(double factor) {
+            this.factor = factor;
+        }
+
+        public double getConversionFactor() {
+            return factor;
+        }
+
+        public String getUnitName() {
+            return name();
+        }
+    }
+
     public static class Quantity<U extends IMeasurable> {
 
         private final double value;
@@ -94,7 +114,6 @@ public class QuantityMeasurementApp {
         }
 
         public Quantity<U> add(Quantity<U> other, U targetUnit) {
-
             if (!unit.getClass().equals(other.unit.getClass()))
                 throw new IllegalArgumentException("Different measurement categories");
 
@@ -102,7 +121,6 @@ public class QuantityMeasurementApp {
             double base2 = other.unit.toBase(other.value);
 
             double sumBase = base1 + base2;
-
             double result = targetUnit.fromBase(sumBase);
 
             return new Quantity<>(round(result), targetUnit);
@@ -114,11 +132,10 @@ public class QuantityMeasurementApp {
 
         @Override
         public boolean equals(Object obj) {
-
             if (this == obj)
                 return true;
 
-            if (obj == null || !(obj instanceof Quantity))
+            if (!(obj instanceof Quantity))
                 return false;
 
             Quantity<?> other = (Quantity<?>) obj;
@@ -144,32 +161,27 @@ public class QuantityMeasurementApp {
         }
     }
 
-    public static void demonstrateEquality(Quantity<?> q1, Quantity<?> q2) {
-        System.out.println("Equality: " + q1 + " == " + q2 + " -> " + q1.equals(q2));
-    }
-
-    public static <U extends IMeasurable> void demonstrateConversion(Quantity<U> q, U target) {
-        System.out.println("Conversion: " + q + " -> " + q.convertTo(target));
-    }
-
-    public static <U extends IMeasurable> void demonstrateAddition(Quantity<U> q1, Quantity<U> q2, U target) {
-        System.out.println("Addition: " + q1 + " + " + q2 + " = " + q1.add(q2, target));
-    }
-
     public static void main(String[] args) {
 
-        Quantity<LengthUnit> length1 = new Quantity<>(1.0, LengthUnit.FEET);
-        Quantity<LengthUnit> length2 = new Quantity<>(12.0, LengthUnit.INCHES);
+        Quantity<LengthUnit> length1 = new Quantity<>(1, LengthUnit.FEET);
+        Quantity<LengthUnit> length2 = new Quantity<>(12, LengthUnit.INCHES);
 
-        demonstrateEquality(length1, length2);
-        demonstrateConversion(length1, LengthUnit.INCHES);
-        demonstrateAddition(length1, length2, LengthUnit.FEET);
+        System.out.println(length1 + " == " + length2 + " -> " + length1.equals(length2));
+        System.out.println("Conversion: " + length1 + " = " + length1.convertTo(LengthUnit.INCHES));
+        System.out.println("Addition: " + length1 + " + " + length2 + " = " + length1.add(length2));
 
-        Quantity<WeightUnit> weight1 = new Quantity<>(1.0, WeightUnit.KILOGRAM);
-        Quantity<WeightUnit> weight2 = new Quantity<>(1000.0, WeightUnit.GRAM);
+        Quantity<WeightUnit> weight1 = new Quantity<>(1, WeightUnit.KILOGRAM);
+        Quantity<WeightUnit> weight2 = new Quantity<>(1000, WeightUnit.GRAM);
 
-        demonstrateEquality(weight1, weight2);
-        demonstrateConversion(weight1, WeightUnit.GRAM);
-        demonstrateAddition(weight1, weight2, WeightUnit.KILOGRAM);
+        System.out.println(weight1 + " == " + weight2 + " -> " + weight1.equals(weight2));
+        System.out.println("Conversion: " + weight1 + " = " + weight1.convertTo(WeightUnit.GRAM));
+        System.out.println("Addition: " + weight1 + " + " + weight2 + " = " + weight1.add(weight2));
+
+        Quantity<VolumeUnit> volume1 = new Quantity<>(1, VolumeUnit.LITRE);
+        Quantity<VolumeUnit> volume2 = new Quantity<>(1000, VolumeUnit.MILLILITRE);
+
+        System.out.println(volume1 + " == " + volume2 + " -> " + volume1.equals(volume2));
+        System.out.println("Conversion: " + volume1 + " = " + volume1.convertTo(VolumeUnit.MILLILITRE));
+        System.out.println("Addition: " + volume1 + " + " + volume2 + " = " + volume1.add(volume2));
     }
 }
