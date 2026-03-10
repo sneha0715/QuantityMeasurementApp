@@ -44,6 +44,35 @@ public class QuantityMeasurementAppTest {
         assertEquals(2, result.getValue(), 0.001);
     }
 
+    @Test
+    public void testLengthSubtraction() {
+
+        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> feet =
+                new QuantityMeasurementApp.Quantity<>(10, QuantityMeasurementApp.LengthUnit.FEET);
+
+        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> inches =
+                new QuantityMeasurementApp.Quantity<>(6, QuantityMeasurementApp.LengthUnit.INCHES);
+
+        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> result =
+                feet.subtract(inches);
+
+        assertEquals(9.5, result.getValue(), 0.001);
+    }
+
+    @Test
+    public void testLengthDivision() {
+
+        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> feet =
+                new QuantityMeasurementApp.Quantity<>(10, QuantityMeasurementApp.LengthUnit.FEET);
+
+        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> twoFeet =
+                new QuantityMeasurementApp.Quantity<>(2, QuantityMeasurementApp.LengthUnit.FEET);
+
+        double result = feet.divide(twoFeet);
+
+        assertEquals(5, result, 0.001);
+    }
+
 
     @Test
     public void testWeightEquality() {
@@ -84,6 +113,35 @@ public class QuantityMeasurementAppTest {
         assertEquals(1.5, result.getValue(), 0.001);
     }
 
+    @Test
+    public void testWeightSubtraction() {
+
+        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.WeightUnit> kg =
+                new QuantityMeasurementApp.Quantity<>(10, QuantityMeasurementApp.WeightUnit.KILOGRAM);
+
+        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.WeightUnit> grams =
+                new QuantityMeasurementApp.Quantity<>(5000, QuantityMeasurementApp.WeightUnit.GRAM);
+
+        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.WeightUnit> result =
+                kg.subtract(grams);
+
+        assertEquals(5, result.getValue(), 0.001);
+    }
+
+    @Test
+    public void testWeightDivision() {
+
+        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.WeightUnit> kg =
+                new QuantityMeasurementApp.Quantity<>(10, QuantityMeasurementApp.WeightUnit.KILOGRAM);
+
+        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.WeightUnit> kg2 =
+                new QuantityMeasurementApp.Quantity<>(5, QuantityMeasurementApp.WeightUnit.KILOGRAM);
+
+        double result = kg.divide(kg2);
+
+        assertEquals(2, result, 0.001);
+    }
+
 
     @Test
     public void testVolumeEquality() {
@@ -122,6 +180,62 @@ public class QuantityMeasurementAppTest {
                 litre.add(ml);
 
         assertEquals(2, result.getValue(), 0.001);
+    }
+
+    @Test
+    public void testVolumeSubtraction() {
+
+        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.VolumeUnit> litre =
+                new QuantityMeasurementApp.Quantity<>(5, QuantityMeasurementApp.VolumeUnit.LITRE);
+
+        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.VolumeUnit> ml =
+                new QuantityMeasurementApp.Quantity<>(500, QuantityMeasurementApp.VolumeUnit.MILLILITRE);
+
+        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.VolumeUnit> result =
+                litre.subtract(ml);
+
+        assertEquals(4.5, result.getValue(), 0.001);
+    }
+
+    @Test
+    public void testVolumeDivision() {
+
+        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.VolumeUnit> litre =
+                new QuantityMeasurementApp.Quantity<>(5, QuantityMeasurementApp.VolumeUnit.LITRE);
+
+        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.VolumeUnit> litre2 =
+                new QuantityMeasurementApp.Quantity<>(10, QuantityMeasurementApp.VolumeUnit.LITRE);
+
+        double result = litre.divide(litre2);
+
+        assertEquals(0.5, result, 0.001);
+    }
+
+
+    @Test
+    public void testSubtractionNegativeResult() {
+
+        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> a =
+                new QuantityMeasurementApp.Quantity<>(5, QuantityMeasurementApp.LengthUnit.FEET);
+
+        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> b =
+                new QuantityMeasurementApp.Quantity<>(10, QuantityMeasurementApp.LengthUnit.FEET);
+
+        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> result = a.subtract(b);
+
+        assertEquals(-5, result.getValue(), 0.001);
+    }
+
+    @Test(expected = ArithmeticException.class)
+    public void testDivisionByZero() {
+
+        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> a =
+                new QuantityMeasurementApp.Quantity<>(10, QuantityMeasurementApp.LengthUnit.FEET);
+
+        QuantityMeasurementApp.Quantity<QuantityMeasurementApp.LengthUnit> zero =
+                new QuantityMeasurementApp.Quantity<>(0, QuantityMeasurementApp.LengthUnit.FEET);
+
+        a.divide(zero);
     }
 
     @Test
