@@ -21,7 +21,10 @@ import com.app.quantitymeasurement.unit.TemperatureUnit;
 import com.app.quantitymeasurement.unit.VolumeUnit;
 import com.app.quantitymeasurement.unit.WeightUnit;
 
-
+/**
+ * Comprehensive test suite for Quantity Measurement Application
+ * Tests cover Entity, Service layers and integration scenarios
+ */
 public class QuantityMeasurementTest {
 
   private QuantityMeasurementServiceImpl service;

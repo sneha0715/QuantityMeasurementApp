@@ -83,7 +83,7 @@ public class Quantity<U extends IMeasurable> {
   }
 
   private void validateCompatibleQuantity(Quantity<?> other) {
-    if (getCategoryClass(this.unit) != getCategoryClass(other.unit)) {
+    if (unit.getClass() != other.unit.getClass()) {
       throw new IllegalArgumentException("Quantities must belong to the same measurement category");
     }
   }
@@ -92,13 +92,9 @@ public class Quantity<U extends IMeasurable> {
     if (targetUnit == null) {
       throw new IllegalArgumentException("Target unit cannot be null");
     }
-    if (getCategoryClass(this.unit) != getCategoryClass(targetUnit)) {
+    if (unit.getClass() != targetUnit.getClass()) {
       throw new IllegalArgumentException("Target unit must belong to the same measurement category");
     }
-  }
-
-  private Class<?> getCategoryClass(Object unitObj) {
-    return unitObj instanceof Enum<?> ? ((Enum<?>) unitObj).getDeclaringClass() : unitObj.getClass();
   }
 
   @Override
@@ -110,18 +106,17 @@ public class Quantity<U extends IMeasurable> {
       return false;
     }
     Quantity<?> other = (Quantity<?>) obj;
-    if (getCategoryClass(this.unit) != getCategoryClass(other.unit)) {
+    if (unit.getClass() != other.unit.getClass()) {
       return false;
     }
-    double left = Math.round(unit.convertToBaseUnit(value) * 1000.0) / 1000.0;
-    double right = Math.round(other.unit.convertToBaseUnit(other.value) * 1000.0) / 1000.0;
-    return Double.compare(left, right) == 0;
+    double left = unit.convertToBaseUnit(value);
+    double right = other.unit.convertToBaseUnit(other.value);
+    return Math.abs(left - right) < 1e-3;
   }
 
   @Override
   public int hashCode() {
-    double baseValue = Math.round(unit.convertToBaseUnit(value) * 1000.0) / 1000.0;
-    return java.util.Objects.hash(getCategoryClass(unit), baseValue);
+    return Double.hashCode(unit.convertToBaseUnit(value));
   }
 
   @Override

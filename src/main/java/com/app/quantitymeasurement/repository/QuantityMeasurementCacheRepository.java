@@ -10,7 +10,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
-public final class QuantityMeasurementCacheRepository implements QuantityMeasurementRepository {
+public final class QuantityMeasurementCacheRepository implements IQuantityMeasurementRepository {
 
   private static volatile QuantityMeasurementCacheRepository instance;
 
@@ -61,6 +61,26 @@ public final class QuantityMeasurementCacheRepository implements QuantityMeasure
     return cache.values().stream()
         .filter(entity -> measurementType.equalsIgnoreCase(entity.getMeasurementType()))
         .collect(Collectors.toList());
+  }
+
+  @Override
+  public synchronized List<QuantityMeasurementEntity> findByOperation(String operation) {
+    if (operation == null) {
+      return new ArrayList<>();
+    }
+    return cache.values().stream()
+        .filter(entity -> operation.equalsIgnoreCase(entity.getOperation()))
+        .collect(Collectors.toList());
+  }
+
+  @Override
+  public synchronized long getTotalCount() {
+    return cache.size();
+  }
+
+  @Override
+  public synchronized void deleteAll() {
+    cache.clear();
   }
 
   @Override
