@@ -106,7 +106,7 @@ public class QuantityMeasurementServiceImpl implements IQuantityMeasurementServi
       return persistSuccess(operation, first, second, null, result, null, null);
     } catch (ArithmeticException ex) {
       saveError(operation, first, second, "Divide by zero");
-      throw new QuantityMeasurementException("Divide by zero", ex);
+      throw new RuntimeException("Divide by zero", ex);
     } catch (RuntimeException ex) {
       saveError(operation, first, second, ex.getMessage());
       throw new QuantityMeasurementException("divide Error: " + ex.getMessage(), ex);
