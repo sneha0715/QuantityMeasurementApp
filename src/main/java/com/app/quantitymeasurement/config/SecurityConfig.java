@@ -43,6 +43,8 @@ public class SecurityConfig {
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(auth -> auth
             .requestMatchers(
+                "/",
+                "/error",
                 "/swagger-ui/**",
                 "/swagger-ui.html",
                 "/v3/api-docs/**",
@@ -51,6 +53,7 @@ public class SecurityConfig {
             .permitAll()
             .requestMatchers(HttpMethod.POST, "/api/v1/auth/**").permitAll()
             .requestMatchers(HttpMethod.GET, "/api/v1/auth/**").permitAll()
+            .requestMatchers("/api/v1/quantities/**").permitAll()
             .anyRequest()
             .authenticated())
         .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
