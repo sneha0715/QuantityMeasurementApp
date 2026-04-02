@@ -55,3 +55,4 @@ Thumbs.db
 # Spring Boot
 application-*.properties
 *.pid
+src/main/resources/application.properties
