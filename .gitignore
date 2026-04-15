@@ -53,6 +53,4 @@ Thumbs.db
 .env.local
 
 # Spring Boot
-application-*.properties
 *.pid
-src/main/resources/application.properties
