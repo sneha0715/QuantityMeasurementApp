@@ -1,4 +1,0 @@
-com\app\apigateway\config\GatewaySecurityAndRateLimitConfig.class
-com\app\apigateway\controller\GatewayFallbackController.class
-com\app\apigateway\filter\JwtRelayGlobalFilter.class
-com\app\apigateway\ApiGatewayApplication.class
